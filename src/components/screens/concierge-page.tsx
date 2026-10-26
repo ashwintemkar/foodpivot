@@ -131,7 +131,7 @@ export function ConciergePage() {
       <div className="concierge-layout">
         <section className="chat-panel">
           <div className="demo-note">
-            <Sparkles size={16} /> Gemma picks one plate from dishes your diet, allergies, and distance already allow. Without an OpenRouter key, the same rules decide. Not a medical guarantee.
+            <Sparkles size={16} /> Gemma, through Backboard, picks one plate from dishes your diet, allergies, and distance already allow. Without a Backboard key, the same rules decide. Not a medical guarantee.
           </div>
           <div className="chat-history">
             {messages.length ? (
