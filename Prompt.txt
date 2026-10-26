@@ -1,0 +1,932 @@
+# MASTER CURSOR PROMPT — FOODPILOT AI
+
+## ROLE
+
+Act as a senior full-stack Next.js engineer, UI/UX designer, and software architect.
+
+Build a premium, production-structured, AI-first food-ordering web application called **FoodPilot AI**.
+
+This project is being developed for the **Hacktoberfest 2026 Open-Source AI Challenge — Slow and Steady**.
+
+The goal is to eliminate the repetitive effort of searching restaurants, comparing meals, selecting dishes, customizing orders, and completing food orders.
+
+**CURRENT PRIORITY: BUILD THE COMPLETE UI FIRST.**
+
+The application must be visually polished, responsive, interactive, and functional using mock data.
+
+Do not integrate real AI model APIs, Swiggy, Zomato, Browserbase, Temporal, or payment gateways yet.
+
+However, structure the code so those services can be integrated later without rewriting the UI.
+
+---
+
+# 1. TECH STACK
+
+Use:
+
+- Next.js App Router with TypeScript
+- React
+- Tailwind CSS
+- shadcn/ui
+- Lucide React
+- Framer Motion / Motion for subtle animations
+- React Hook Form
+- Zod for validation
+- Zustand for client-side state where appropriate
+- TanStack Query for asynchronous data
+- PostgreSQL using Tiger Data
+- Prisma ORM with PostgreSQL adapter
+- Auth.js / NextAuth for Google authentication
+- Recharts for relevant analytics
+- Next.js route handlers for backend endpoints
+
+Use current stable compatible package versions.
+
+Use pnpm as the package manager.
+
+Follow clean architecture, modular components, reusable hooks, and strict TypeScript conventions.
+
+Avoid unnecessary dependencies.
+
+---
+
+# 2. DESIGN DIRECTION
+
+The application must NOT look like a generic admin dashboard.
+
+It should look like a premium consumer AI application combining the conversational simplicity of ChatGPT with the visual appeal of modern food-delivery applications.
+
+Design principles:
+
+- Premium, minimal, modern
+- Warm and welcoming
+- Beautiful food photography
+- Large, expressive typography
+- Generous whitespace
+- Rounded cards
+- Soft shadows
+- Clean navigation
+- Smooth transitions
+- Consistent spacing
+- Mobile-first responsive layouts
+
+Suggested colors:
+
+- Primary: Warm orange #F97316
+- Background: Soft ivory #FFFCF7
+- Surface: White #FFFFFF
+- Text: Deep charcoal #1F2937
+- Secondary text: #64748B
+- Success: Natural green #16A34A
+- Warning: Amber #F59E0B
+- Error: #DC2626
+
+Use the orange accent selectively. Avoid making every element orange.
+
+Use a consistent typography system, preferably Geist or Inter.
+
+Support light and dark themes.
+
+Use realistic food images from stable sources, with fallbacks.
+
+No excessive gradients, glassmorphism, clutter, or meaningless animations.
+
+---
+
+# 3. APPLICATION LAYOUT
+
+Desktop:
+
+- Clean top navigation
+- Brand logo on the left
+- Main navigation in the center
+- Delivery location, theme switch, and user profile on the right
+- Maximum content width around 1440px
+- Responsive card layouts
+
+Mobile:
+
+- Compact header
+- Bottom navigation
+- Touch-friendly controls
+- Responsive AI chat
+- Full-width food cards
+- Bottom-sheet filters
+- Sticky cart summary when appropriate
+
+Navigation:
+
+1. Discover
+2. AI Concierge
+3. My Orders
+4. Favorites
+5. Food Preferences
+6. Profile
+
+---
+
+# 4. SCREEN 1 — LANDING PAGE
+
+Route: /
+
+Create a beautiful landing page.
+
+Hero heading:
+
+"Craving something? Let AI handle the rest."
+
+Subheading:
+
+"Tell FoodPilot what you're in the mood for. We'll find the right meal, compare your options, and prepare your order."
+
+Primary CTA:
+
+"Let AI Find My Food"
+
+Secondary CTA:
+
+"Explore Food"
+
+Include:
+
+- Premium hero section
+- Attractive food imagery
+- Example conversational prompts
+- How FoodPilot works
+- Features section
+- Privacy and approval explanation
+- Footer
+
+Example prompts:
+
+"Find me a spicy chicken biryani under ₹300."
+
+"I want something light for dinner."
+
+"Find a high-protein vegetarian lunch."
+
+"Order something warm for this rainy evening."
+
+"Find a family dinner for four under ₹1,000."
+
+Clicking a prompt should open the AI Concierge with that prompt prefilled.
+
+---
+
+# 5. SCREEN 2 — GOOGLE LOGIN
+
+Route: /login
+
+Implement Google authentication using Auth.js.
+
+Requirements:
+
+- Sign in with Google
+- Session handling
+- Protected routes
+- Logout
+- Profile menu
+- Authentication loading states
+- Error handling
+- Redirect after successful login
+
+Use environment variables:
+
+AUTH_SECRET
+AUTH_GOOGLE_ID
+AUTH_GOOGLE_SECRET
+DATABASE_URL
+
+Never hardcode credentials.
+
+If Google OAuth credentials are unavailable, provide a clearly labeled development-only demo login mode.
+
+Do not pretend that mock login is real Google authentication.
+
+The demo mode must be disabled in production.
+
+---
+
+# 6. SCREEN 3 — ONBOARDING
+
+Route: /onboarding
+
+After login, collect optional user preferences.
+
+Include:
+
+- Display name
+- Preferred delivery location
+- Vegetarian / Non-vegetarian / Vegan
+- Preferred cuisines
+- Spice tolerance
+- Food allergies
+- Ingredients to avoid
+- Budget preference
+- Typical meal timings
+- Preferred portion size
+- Health-related food goals
+- Preferred restaurants
+- Delivery speed preference
+
+Health-related preferences should be optional.
+
+Examples:
+
+- Lower sodium preference
+- Higher protein preference
+- Lower sugar preference
+- Avoid oily foods
+- Avoid specific ingredients
+
+Do not infer medical diagnoses.
+
+Do not make medical safety guarantees.
+
+Clearly distinguish allergies from general dislikes.
+
+Allow users to skip onboarding and update preferences later.
+
+Store sensitive preference data only with appropriate access controls.
+
+---
+
+# 7. SCREEN 4 — AI CONCIERGE
+
+Route: /concierge
+
+This is the MAIN SCREEN.
+
+It should feel like a premium conversational AI assistant.
+
+Heading:
+
+"What would you like to eat?"
+
+Include:
+
+- Large conversational input
+- Chat history
+- Prompt suggestion chips
+- Voice input button as a future-integration placeholder
+- Food preference quick filters
+- Budget selector
+- Delivery-time preference
+- Cuisine selector
+- Veg / Non-veg toggle
+- Spice level
+- Number of people
+- Dietary restrictions
+
+Example user message:
+
+"Order something spicy, under ₹350, not too oily, and deliver quickly."
+
+The mock AI should return:
+
+- Interpretation of the request
+- Applied filters
+- Recommended meals
+- Reasoning summary
+- Any missing information
+- Option to modify preferences
+- Option to prepare an order
+
+Do not implement fake intelligent responses using random strings.
+
+Build a deterministic mock recommendation engine using structured data and filtering rules.
+
+Clearly label responses as demo recommendations.
+
+Architecture:
+
+Create an AIProvider interface.
+
+Implement:
+
+MockAIProvider
+
+Reserve future adapters for:
+
+GemmaAIProvider
+MastraAgentProvider
+
+Do not call real models yet.
+
+---
+
+# 8. SCREEN 5 — FOOD DISCOVERY
+
+Route: /discover
+
+Create a modern food discovery experience.
+
+Include:
+
+- Search
+- Cuisine categories
+- Restaurant cards
+- Dish cards
+- Filters
+- Sorting
+- Favorites
+- Recently viewed dishes
+- Popular meals
+- Budget-friendly meals
+- Quick-delivery meals
+
+Each dish card should display:
+
+- Image
+- Dish name
+- Restaurant
+- Price
+- Rating
+- Delivery estimate
+- Vegetarian status
+- Spice level
+- Dietary tags
+- Allergen information when available
+- Add to cart
+- View details
+
+Use realistic Indian food examples.
+
+Provide at least 30 dishes and 10 fictional restaurants.
+
+Do not represent mock restaurants as real Swiggy or Zomato partners.
+
+---
+
+# 9. SCREEN 6 — SMART RECOMMENDATIONS
+
+Route: /recommendations
+
+Display ranked recommendations based on user preferences.
+
+Each recommendation must show:
+
+- Match score
+- Price
+- Restaurant
+- Estimated delivery
+- Dietary compatibility
+- Spice compatibility
+- Budget compatibility
+- Reason for recommendation
+- Missing nutrition or allergen information
+- Select meal button
+
+Provide comparison mode for 2–3 meals.
+
+Important:
+
+Match scores must come from documented deterministic rules in mock mode.
+
+Do not invent nutritional accuracy or medical suitability.
+
+---
+
+# 10. HEALTH AND SEASONAL CONTEXT
+
+Create a Food Context Engine interface.
+
+It should consider the following optional factors:
+
+### User preferences
+- Allergies
+- Dietary restrictions
+- Spice tolerance
+- Ingredients to avoid
+- Portion preference
+- Budget
+- Meal timing
+
+### Food characteristics
+- Calories, if verified data exists
+- Protein, if verified data exists
+- Sugar, if verified data exists
+- Sodium, if verified data exists
+- Ingredients
+- Allergens
+- Preparation style
+- Portion size
+
+### Seasonal context
+- Hot weather
+- Rainy weather
+- Cold weather
+- Time of day
+- Seasonal ingredients
+- Food availability
+
+Use mock weather and season data for now.
+
+Never claim a food is medically safe based only on AI inference.
+
+If allergen information is unknown, display:
+
+"Allergen information not verified."
+
+Do not rank unknown-allergen meals as safe for users with serious allergies.
+
+Provide a transparent explanation of why a dish was recommended.
+
+Do not automatically enforce dietary or health preferences without user consent.
+
+---
+
+# 11. SCREEN 7 — DISH DETAILS
+
+Route: /dish/[id]
+
+Include:
+
+- Large food image
+- Dish description
+- Restaurant information
+- Ingredients
+- Allergens
+- Nutrition information when available
+- Customizations
+- Spice adjustment
+- Portion selection
+- Add-ons
+- Quantity
+- Special instructions
+- Price calculation
+- Add to cart
+
+Show warnings when a selected customization conflicts with saved dietary preferences.
+
+---
+
+# 12. SCREEN 8 — SMART CART
+
+Route: /cart
+
+Include:
+
+- Selected items
+- Quantities
+- Customizations
+- Special instructions
+- Delivery address
+- Estimated delivery time
+- Restaurant details
+- Item subtotal
+- Packaging fee
+- Delivery fee
+- Platform fee
+- Taxes
+- Discounts
+- Grand total
+
+All calculations must work with mock data.
+
+Use integer paise for money calculations to avoid floating-point errors.
+
+Support:
+
+- Update quantity
+- Remove item
+- Clear cart
+- Edit customization
+- Change address
+- Apply demo coupon
+
+Do not combine items from different restaurants into a single checkout unless the provider supports it.
+
+---
+
+# 13. SCREEN 9 — ORDER APPROVAL
+
+Route: /checkout
+
+This is a critical screen.
+
+The AI must NEVER place an order without explicit user approval.
+
+Show:
+
+- Restaurant
+- Selected dishes
+- Quantity
+- Customizations
+- Total price
+- Delivery address
+- Delivery instructions
+- Estimated delivery
+- Payment method
+- Dietary warnings
+- Final confirmation
+
+Require a clear action:
+
+"Approve & Place Demo Order"
+
+For mock mode, generate a simulated order only.
+
+Do not charge real money.
+
+Do not save payment card details.
+
+Do not claim a real restaurant has accepted the order.
+
+Prevent accidental duplicate submissions.
+
+---
+
+# 14. SCREEN 10 — ORDER TRACKING
+
+Route: /orders/[id]
+
+Create an attractive order tracking interface.
+
+Mock statuses:
+
+- Order Created
+- Confirmed
+- Preparing
+- Ready for Pickup
+- Out for Delivery
+- Delivered
+
+Include:
+
+- Progress timeline
+- Order summary
+- Estimated delivery
+- Delivery address
+- Status history
+- Support placeholder
+- Reorder button
+
+Clearly show:
+
+"Demo Order — No Real Purchase Made"
+
+Use a deterministic mock state transition system.
+
+---
+
+# 15. SCREEN 11 — ORDER HISTORY
+
+Route: /orders
+
+Include:
+
+- Previous orders
+- Date
+- Restaurant
+- Items
+- Total
+- Status
+- Reorder
+- View details
+- Filters
+
+Provide sample order history.
+
+---
+
+# 16. SCREEN 12 — USER PROFILE
+
+Route: /profile
+
+Include:
+
+- Google profile information
+- Saved addresses
+- Food preferences
+- Allergies
+- Favorite cuisines
+- Budget preferences
+- Order history
+- Notification settings
+- Theme settings
+- Privacy settings
+- Sign out
+
+Provide options to export or delete saved preferences and demo orders.
+
+---
+
+# 17. TIGER DATA / POSTGRESQL
+
+Use Tiger Data as the PostgreSQL-compatible database provider.
+
+Create a clean database architecture using Prisma.
+
+Suggested tables:
+
+- users
+- accounts
+- sessions
+- user_preferences
+- user_allergies
+- saved_addresses
+- restaurants
+- dishes
+- dish_ingredients
+- dish_allergens
+- dish_customizations
+- carts
+- cart_items
+- orders
+- order_items
+- order_status_history
+- conversations
+- messages
+- recommendation_runs
+- recommendation_results
+- agent_runs
+- agent_events
+
+Use UUIDs where appropriate.
+
+Include:
+
+- Proper relationships
+- Indexes
+- Foreign keys
+- Created/updated timestamps
+- Database migrations
+- Seed scripts
+- Environment configuration
+
+Store data on the server.
+
+Never expose database credentials to the browser.
+
+Important:
+
+If DATABASE_URL is not configured, use a development-only mock repository.
+
+The application must remain usable in demo mode without a database.
+
+Create repository interfaces so the application can switch between mock repositories and Prisma repositories.
+
+Avoid hardcoding mock data directly inside UI components.
+
+---
+
+# 18. MOCK DATA REQUIREMENTS
+
+Create realistic mock data:
+
+- 10 fictional restaurants
+- 30–50 dishes
+- Multiple cuisines
+- Vegetarian and non-vegetarian dishes
+- Prices in INR
+- Mock ratings
+- Mock delivery estimates
+- Ingredient lists
+- Allergen metadata
+- Nutrition data only where explicitly marked illustrative
+- Seasonal recommendation tags
+- Sample user profiles
+- Sample conversations
+- Sample order history
+
+Use deterministic mock data.
+
+Avoid random changes on every render.
+
+Ensure every visible UI action has meaningful behavior.
+
+---
+
+# 19. COMPONENT ARCHITECTURE
+
+Create reusable components such as:
+
+- AppHeader
+- MobileBottomNav
+- FoodHero
+- AIChatPanel
+- PromptSuggestions
+- FoodCard
+- RestaurantCard
+- RecommendationCard
+- RecommendationComparison
+- DietaryPreferenceSelector
+- AllergyWarning
+- BudgetSlider
+- CuisineFilter
+- SeasonalSuggestion
+- DishCustomizationDialog
+- CartSummary
+- PriceBreakdown
+- OrderApprovalDialog
+- OrderTimeline
+- AddressSelector
+- EmptyState
+- ErrorState
+- LoadingSkeleton
+
+Keep business logic outside presentation components.
+
+---
+
+# 20. FUTURE AI AND SPONSOR INTEGRATIONS
+
+Prepare adapter interfaces for future integrations.
+
+Do not integrate the real services yet.
+
+### Gemma
+Core open-weight model for natural language understanding and food recommendation reasoning.
+
+### Mastra
+Agent orchestration and tool execution.
+
+### Temporal
+Durable order workflows, retries, and recovery.
+
+### Browserbase / Stagehand
+Authorized restaurant website interaction.
+
+### Auth0
+Potential future delegated authorization and human approval integration.
+
+Do not mix Auth0 and Auth.js without a deliberate authentication migration plan.
+
+### Sentry
+Agent tracing and error monitoring.
+
+### Tiger Data
+PostgreSQL data storage, with pgvector capabilities reserved for future semantic search.
+
+### Render
+Future application deployment.
+
+### ElevenLabs
+Optional future voice ordering.
+
+### SerpApi
+Optional future restaurant research, subject to source accuracy and permissions.
+
+Create documentation describing future integration points.
+
+Do not add fake API calls or unnecessary dependencies for these services.
+
+---
+
+# 21. SECURITY AND PRIVACY
+
+Implement:
+
+- Server-side authentication checks
+- Input validation
+- Secure environment variables
+- Protected user-specific data
+- Authorization checks on orders and profiles
+- Safe error messages
+- No hardcoded secrets
+- No real payment processing
+- No unauthorized browser automation
+- No automatic final order placement without approval
+
+Handle food allergies conservatively.
+
+Avoid presenting mock health recommendations as professional medical advice.
+
+---
+
+# 22. UI QUALITY REQUIREMENTS
+
+Every screen must have:
+
+- Responsive layout
+- Loading states
+- Empty states
+- Error states
+- Working buttons
+- Form validation
+- Accessible labels
+- Keyboard navigation
+- Consistent spacing
+- Clear visual hierarchy
+- Smooth but restrained animations
+
+No placeholder buttons that do nothing.
+
+No broken navigation.
+
+No fake success messages for actions that have not completed.
+
+No horizontal overflow on mobile.
+
+---
+
+# 23. IMPLEMENTATION ORDER
+
+Follow this exact priority:
+
+Phase 1 — Foundation
+- Inspect existing repository
+- Initialize Next.js if needed
+- Install dependencies
+- Configure Tailwind and shadcn/ui
+- Set up layout, typography, colors, and navigation
+
+Phase 2 — UI
+- Landing page
+- Login
+- Onboarding
+- AI Concierge
+- Discover
+- Recommendations
+- Dish details
+- Cart
+- Checkout
+- Order tracking
+- Order history
+- Profile
+
+Phase 3 — Functional Mock Workflows
+- Mock AI recommendation engine
+- Preference filtering
+- Cart operations
+- Checkout approval
+- Mock order creation
+- Order status progression
+- Order history
+- Persistent demo state
+
+Phase 4 — Authentication and Database
+- Google OAuth configuration
+- Prisma schema
+- Tiger Data PostgreSQL integration
+- Migrations
+- Seed data
+- Repository adapters
+
+Phase 5 — Quality
+- Responsive testing
+- Accessibility
+- Unit tests
+- Integration tests
+- Build verification
+- README
+- Environment example
+
+If OAuth credentials or DATABASE_URL are unavailable, do not block UI development.
+
+Provide setup instructions and continue with development-mode adapters.
+
+---
+
+# 24. EXPECTED RESULT
+
+I expect a polished, working Next.js application that demonstrates:
+
+1. A user opens FoodPilot AI.
+2. The user logs in or enters development demo mode.
+3. The user sets food preferences.
+4. The user asks for food in natural language.
+5. The mock AI understands the request using deterministic logic.
+6. The system recommends suitable meals.
+7. The user compares and selects a dish.
+8. The user customizes the order.
+9. The system calculates the total.
+10. The user approves checkout.
+11. A simulated order is created.
+12. The user tracks the simulated order.
+
+All of this must work without real AI APIs or real food-ordering integrations.
+
+---
+
+# 25. IMPORTANT FINAL INSTRUCTIONS
+
+Do not stop after creating static screens.
+
+Implement working navigation, state management, validation, and mock business logic.
+
+Do not overengineer the initial architecture.
+
+Prioritize visual quality and a convincing end-to-end demonstration.
+
+Do not use hardcoded mock responses inside individual React components.
+
+Keep future AI integrations replaceable through clear interfaces.
+
+Before making changes, inspect the repository and create a concise implementation plan.
+
+Then implement the application incrementally.
+
+After implementation:
+
+- Run TypeScript checks.
+- Run linting.
+- Run the production build.
+- Fix all errors.
+- Provide a summary of completed screens.
+- List environment variables required.
+- List remaining integrations.
+- Explain how to run the application locally.
+
+The final result should feel like a real premium AI food concierge product, not a basic hackathon prototype.

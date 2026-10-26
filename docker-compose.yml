@@ -1,0 +1,20 @@
+services:
+  tiger:
+    image: timescale/timescaledb:latest-pg16
+    container_name: foodpilot-tiger
+    environment:
+      POSTGRES_USER: foodpilot
+      POSTGRES_PASSWORD: foodpilot
+      POSTGRES_DB: foodpilot
+    ports:
+      - "55432:5432"
+    volumes:
+      - tiger_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodpilot -d foodpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  tiger_data:
