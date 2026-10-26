@@ -350,6 +350,23 @@ export interface AIProvider {
   }): ConciergeResult;
 }
 
+export function applyModelPick(result: ConciergeResult, dishId: string, why: string): ConciergeResult | null {
+  const match = result.recommendations.find((row) => row.dish.id === dishId);
+  if (!match) return null;
+  const rest = result.recommendations.filter((row) => row.dish.id !== dishId);
+  const chosen = {
+    ...match,
+    reasons: [why, ...match.reasons].filter(Boolean).slice(0, 3),
+  };
+  return {
+    ...result,
+    pick: match.dish,
+    prepared: [{ dishId: match.dish.id, quantity: result.prepared[0]?.quantity || 1 }],
+    recommendations: [chosen, ...rest],
+    interpretation: `${why} ${result.interpretation}`,
+  };
+}
+
 export const MockAIProvider: AIProvider = {
   recommend: runConcierge,
 };

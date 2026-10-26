@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Food Pivot
 
-## Getting Started
+You are tired and do not want to decide dinner. Food Pivot reads the mood, keeps the diet and allergy rules, and asks Gemma 4 to pick one plate that is already on the menu.
 
-First, run the development server:
+The menu, the distance, and the allergies are code. Gemma only chooses among dishes those rules already allowed. If `OPENROUTER_API_KEY` is missing, the same ranker decides.
+
+## Local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+docker compose up -d
+copy .env.example .env
+pnpm install
+pnpm db:push
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`DATABASE_URL` for the local Tiger (Timescale) container:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+postgresql://foodpilot:foodpilot@127.0.0.1:55432/foodpilot
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Set `OPENROUTER_API_KEY`. The model defaults to `google/gemma-4-26b-a4b-it`.
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+**Tiger Data.** Create a Tiger service, copy the Postgres connection string into `DATABASE_URL`, then `pnpm db:push`. The local compose file is the same Postgres shape.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Render.** New Blueprint from this repo. It reads `render.yaml`. Set `OPENROUTER_API_KEY`, `DATABASE_URL`, `AUTH_SECRET`, and `AUTH_URL` to the Render URL.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**DigitalOcean App Platform.** The spec is `.do/app.yaml`. Point it at `ashwintemkar/foodpivot` and set the same four secrets. A GPU Droplet is not required: Gemma is called through OpenRouter.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Orders are staged in the app. Checkout does not call a restaurant.

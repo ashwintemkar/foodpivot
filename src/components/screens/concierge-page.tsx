@@ -35,22 +35,46 @@ export function ConciergePage() {
     setDraft(prompt);
   }, [prompt]);
 
-  function ask(text: string) {
+  async function ask(text: string) {
     const trimmed = text.trim();
     if (!trimmed) return;
-    const result = MockAIProvider.recommend({
+    const local = MockAIProvider.recommend({
       prompt: trimmed,
       prefs: preferences,
       orders,
       filters,
       lastResult,
     });
+    let result = local;
+    let modelNote = "";
+    try {
+      const response = await fetch("/api/decide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: trimmed,
+          prefs: preferences,
+          orders,
+          filters,
+          lastResult,
+        }),
+      });
+      if (response.ok) {
+        const data = (await response.json()) as { source?: string; model?: string | null; result?: typeof local };
+        if (data.result) {
+          result = data.result;
+          modelNote = data.source === "gemma" && data.model ? ` Gemma (${data.model}) chose among dishes the rules already allowed.` : "";
+        }
+      }
+    } catch {
+      result = local;
+    }
     replaceCart(result.prepared);
     setLastResult(result);
     setPrompt(trimmed);
     const pickLine = result.confirmOrder
       ? `I've staged ${result.pick.name} from ${result.pick.restaurant} (${money(result.pick.price)}, ${result.pick.minutes} min). Approve it on checkout — I never place an order without you.`
-      : `${result.interpretation}\n\nI'll go with ${result.pick.name} from ${result.pick.restaurant} at ${money(result.pick.price)}. ${result.recommendations[0]?.reasons.join(" ")}`;
+      : `${result.interpretation}\n\nI'll go with ${result.pick.name} from ${result.pick.restaurant} at ${money(result.pick.price)}. ${result.recommendations[0]?.reasons.join(" ")}${modelNote}`;
     pushMessages([
       { id: `u-${Date.now()}`, role: "user", text: trimmed },
       { id: `a-${Date.now()}-r`, role: "assistant", text: pickLine },
@@ -107,7 +131,7 @@ export function ConciergePage() {
       <div className="concierge-layout">
         <section className="chat-panel">
           <div className="demo-note">
-            <Sparkles size={16} /> Recommendations are deterministic filters on your history, not a live model and not a medical guarantee.
+            <Sparkles size={16} /> Gemma picks one plate from dishes your diet, allergies, and distance already allow. Without an OpenRouter key, the same rules decide. Not a medical guarantee.
           </div>
           <div className="chat-history">
             {messages.length ? (

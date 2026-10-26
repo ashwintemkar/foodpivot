@@ -1,0 +1,26 @@
+name: foodpivot
+services:
+  - name: web
+    github:
+      repo: ashwintemkar/foodpivot
+      branch: main
+      deploy_on_push: true
+    build_command: corepack enable && pnpm install --frozen-lockfile && pnpm exec prisma generate && pnpm build
+    run_command: pnpm start
+    http_port: 3000
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    envs:
+      - key: OPENROUTER_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: OPENROUTER_MODEL
+        value: google/gemma-4-26b-a4b-it
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: AUTH_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: AUTH_URL
+        scope: RUN_TIME
+        type: SECRET
