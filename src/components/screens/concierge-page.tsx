@@ -63,7 +63,7 @@ export function ConciergePage() {
         const data = (await response.json()) as { source?: string; model?: string | null; result?: typeof local };
         if (data.result) {
           result = data.result;
-          modelNote = data.source === "gemma" && data.model ? ` Gemma (${data.model}) chose among dishes the rules already allowed.` : "";
+          modelNote = data.source === "gemma" && data.model ? ` That's the food. Places nearby already serve it.` : "";
         }
       }
     } catch {
@@ -126,12 +126,12 @@ export function ConciergePage() {
       <PageHeading
         eyebrow="AI Concierge · remembers your table"
         title="What would you like to eat?"
-        copy="I start from your current address, then rank highly rated kitchens that are not too far — especially when you name a dish like biryani."
+        copy="Tell us the area, how you eat, and what the day looks like. We name the food. Nearby places that already serve it come after."
       />
       <div className="concierge-layout">
         <section className="chat-panel">
           <div className="demo-note">
-            <Sparkles size={16} /> Gemma, through Backboard, picks one plate from dishes your diet, allergies, and distance already allow. Without a Backboard key, the same rules decide. Not a medical guarantee.
+            <Sparkles size={16} /> We name the food from your diet, your tags, and what you ate last. Nearby menus only show where that food already exists.
           </div>
           <div className="chat-history">
             {messages.length ? (

@@ -28,7 +28,11 @@ export async function POST(request: Request) {
   if (ruled.confirmOrder || !gemmaConfigured()) {
     return NextResponse.json({ source: "rules", model: null, result: ruled });
   }
-  const choice = await askGemma(ruled, body.prompt);
+  const choice = await askGemma(
+    ruled,
+    body.prompt,
+    (body.orders ?? []).slice(0, 4).map((order) => order.items[0]).filter(Boolean).join(", "),
+  );
   const why = choice?.why?.trim().slice(0, 220);
   const applied = choice?.dishId && why ? applyModelPick(ruled, choice.dishId, why) : null;
   if (!applied) {

@@ -1,7 +1,7 @@
+import { menuFor } from "./city-menus";
 import {
   MockFoodContextEngine,
   dishById,
-  dishes,
   money,
   type Diet,
   type Dish,
@@ -276,10 +276,11 @@ export function runConcierge(input: {
   const nextFilters = { ...filters, diet };
   const lastSimilar = family ? lastOrderMatching(orders, family) : orders[0];
   const origin = resolveOrigin(prefs);
-  const nearby = dishes.filter((dish) => haversineKm(origin, dish) <= MAX_DELIVERY_KM);
+  const book = menuFor(prefs.location);
+  const nearby = book.filter((dish) => haversineKm(origin, dish) <= MAX_DELIVERY_KM);
   const maxKm = nearby.some((dish) => !family || dish.family === family) ? MAX_DELIVERY_KM : FALLBACK_DELIVERY_KM;
 
-  const scored = dishes
+  const scored = book
     .map((dish) => scoreDish(dish, prompt, family, budget, prefs, nextFilters, orders, hardBudget, origin, maxKm))
     .filter((row): row is RankedDish => Boolean(row))
     .sort(
@@ -297,7 +298,7 @@ export function runConcierge(input: {
   }));
 
   const fallback = ranked[0] ?? {
-    dish: dishes[0],
+    dish: book[0],
     score: 60,
     raw: 60,
     reasons: ["Defaulting to the house biryani while I learn more."],
